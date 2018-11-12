@@ -43,3 +43,6 @@ out
 
 /captures
 .externalNativeBuild
+
+# API Key for Google Maps
+google_maps_api.xml
