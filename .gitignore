@@ -45,4 +45,5 @@ out
 .externalNativeBuild
 
 # API Key for Google Maps
-google_maps_api.xml
+app/src/debug/
+app/src/release/
