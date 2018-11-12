@@ -105,9 +105,11 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLocation = (Location) task.getResult();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLocation.getLatitude(),
-                                            mLocation.getLongitude()), 16));
+                            if (mLocation != null) {
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                        new LatLng(mLocation.getLatitude(),
+                                                mLocation.getLongitude()), 16));
+                            }
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
