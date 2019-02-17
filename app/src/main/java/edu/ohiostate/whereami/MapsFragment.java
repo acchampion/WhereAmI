@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -64,7 +65,10 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                     .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                         @Override
                         public void onConnected(@Nullable Bundle bundle) {
-                            getActivity().invalidateOptionsMenu();
+                            Activity theActivity = getActivity();
+                            if (theActivity != null) {
+                                theActivity.invalidateOptionsMenu();
+                            }
                         }
 
                         @Override
@@ -145,8 +149,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         FragmentActivity activity = getActivity();
 
         if (activity != null) {
-            SharedPreferences settings = activity.getSharedPreferences(getString(R.string.prefs), 0);
-            boolean isEulaAccepted = settings.getBoolean(getString(R.string.eula_accepted_key), false);
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
+            boolean isEulaAccepted = sharedPrefs.getBoolean(getString(R.string.eula_accepted_key), false);
             if (!isEulaAccepted) {
                 DialogFragment eulaDialogFragment = new EulaDialogFragment();
                 eulaDialogFragment.show(activity.getSupportFragmentManager(), "eula");
