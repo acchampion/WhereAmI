@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.text.Html;
 
 /**
  * Created by adamcchampion on 2014/09/22.
@@ -31,7 +30,7 @@ public class EulaDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.about_app)
-                .setMessage(Html.fromHtml(getString(R.string.eula)))
+                .setMessage(Utils.fromHtml(getString(R.string.eula)))
                 .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
