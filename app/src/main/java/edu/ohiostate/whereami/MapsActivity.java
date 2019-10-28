@@ -2,10 +2,11 @@ package edu.ohiostate.whereami;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
+import androidx.fragment.app.Fragment;
 
 public class MapsActivity extends SingleFragmentActivity {
     private static final int REQUEST_ERROR = 0;
