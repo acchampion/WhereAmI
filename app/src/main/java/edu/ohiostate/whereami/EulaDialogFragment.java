@@ -17,19 +17,17 @@ import androidx.fragment.app.DialogFragment;
 public class EulaDialogFragment extends DialogFragment {
 
     public void setEulaAccepted() {
-        Activity activity = getActivity();
-        if (activity != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(getString(R.string.eula_accepted_key), true).apply();
-        }
-    }
+        Activity activity = requireActivity();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putBoolean(getString(R.string.eula_accepted_key), true).apply();
+	}
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle(R.string.about_app)
                 .setMessage(Utils.fromHtml(getString(R.string.eula)))
                 .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
@@ -42,11 +40,9 @@ public class EulaDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            activity.finish();
-                        }
-                    }
+                        Activity activity = requireActivity();
+						activity.finish();
+					}
                 });
         return builder.create();
     }

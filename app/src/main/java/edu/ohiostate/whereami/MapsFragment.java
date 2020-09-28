@@ -59,28 +59,24 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        Activity activity = getActivity();
-        if (activity != null) {
-            mApiClient = new GoogleApiClient.Builder(activity)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                        @Override
-                        public void onConnected(@Nullable Bundle bundle) {
-                            Activity theActivity = getActivity();
-                            if (theActivity != null) {
-                                theActivity.invalidateOptionsMenu();
-                            }
-                        }
+        Activity activity = requireActivity();
+		mApiClient = new GoogleApiClient.Builder(activity)
+				.addApi(LocationServices.API)
+				.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+					@Override
+					public void onConnected(@Nullable Bundle bundle) {
+						Activity theActivity = requireActivity();
+						theActivity.invalidateOptionsMenu();
+					}
 
-                        @Override
-                        public void onConnectionSuspended(int i) {
-                            Log.d(TAG, "GoogleAPIClient connection suspended");
-                        }
-                    })
-                    .build();
-            getMapAsync(this);
-        }
-    }
+					@Override
+					public void onConnectionSuspended(int i) {
+						Log.d(TAG, "GoogleAPIClient connection suspended");
+					}
+				})
+				.build();
+		getMapAsync(this);
+	}
 
     @Override
     public void onResume() {
@@ -93,38 +89,35 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     private void findLocation() {
         updateLocationUI();
         if (hasLocationPermission()) {
-            Activity activity = getActivity();
-
-            if (activity != null) {
-                mDefaultLocation = new LatLng(40.0, -83.0);
-                LocationRequest locationRequest = LocationRequest.create();
-                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                locationRequest.setNumUpdates(1);
-                locationRequest.setInterval(0);
-                FusedLocationProviderClient locationProvider =
-                        LocationServices.getFusedLocationProviderClient(getActivity());
-                Task<Location> locationResult = locationProvider.getLastLocation();
-                locationResult.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            mLocation = (Location) task.getResult();
-                            if (mLocation != null) {
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(mLocation.getLatitude(),
-                                                mLocation.getLongitude()), 16));
-                            }
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.");
-                            Log.e(TAG, "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, 16));
-                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                        }
-                    }
-                });
-            }
-        } else {
+        	final Activity activity = requireActivity();
+			mDefaultLocation = new LatLng(40.0, -83.0);
+			LocationRequest locationRequest = LocationRequest.create();
+			locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+			locationRequest.setNumUpdates(1);
+			locationRequest.setInterval(0);
+			FusedLocationProviderClient locationProvider =
+					LocationServices.getFusedLocationProviderClient(activity);
+			Task<Location> locationResult = locationProvider.getLastLocation();
+			locationResult.addOnCompleteListener(activity, new OnCompleteListener<Location>() {
+				@Override
+				public void onComplete(@NonNull Task task) {
+					if (task.isSuccessful()) {
+						// Set the map's camera position to the current location of the device.
+						mLocation = (Location) task.getResult();
+						if (mLocation != null) {
+							mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+									new LatLng(mLocation.getLatitude(),
+											mLocation.getLongitude()), 16));
+						}
+					} else {
+						Log.d(TAG, "Current location is null. Using defaults.");
+						Log.e(TAG, "Exception: %s", task.getException());
+						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, 16));
+						mMap.getUiSettings().setMyLocationButtonEnabled(false);
+					}
+				}
+			});
+		} else {
             requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
         }
     }
@@ -132,12 +125,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     @Override
     public void onStart() {
         super.onStart();
-        Activity activity = getActivity();
-        if (activity != null) {
-            activity.invalidateOptionsMenu();
-        }
-
-        mApiClient.connect();
+        Activity activity = requireActivity();
+		activity.invalidateOptionsMenu();
+		mApiClient.connect();
     }
 
     @Override
@@ -147,17 +137,15 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     }
 
     private void setUpEula() {
-        FragmentActivity activity = getActivity();
+        FragmentActivity activity = requireActivity();
 
-        if (activity != null) {
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            boolean isEulaAccepted = sharedPrefs.getBoolean(getString(R.string.eula_accepted_key), false);
-            if (!isEulaAccepted) {
-                DialogFragment eulaDialogFragment = new EulaDialogFragment();
-                eulaDialogFragment.show(activity.getSupportFragmentManager(), "eula");
-            }
-        }
-    }
+		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
+		boolean isEulaAccepted = sharedPrefs.getBoolean(getString(R.string.eula_accepted_key), false);
+		if (!isEulaAccepted) {
+			DialogFragment eulaDialogFragment = new EulaDialogFragment();
+			eulaDialogFragment.show(activity.getSupportFragmentManager(), "eula");
+		}
+	}
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -229,11 +217,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     }
 
     private boolean hasLocationPermission() {
-        Activity activity = getActivity();
-        int result = PackageManager.PERMISSION_DENIED;
-        if (activity != null) {
-            result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        return result == PackageManager.PERMISSION_GRANTED;
+        Activity activity = requireActivity();
+        int result;
+		result = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+		return result == PackageManager.PERMISSION_GRANTED;
     }
 }
