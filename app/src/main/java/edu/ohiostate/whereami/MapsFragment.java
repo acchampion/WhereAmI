@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -87,9 +87,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
     @SuppressLint("MissingPermission")
     private void findLocation() {
-        updateLocationUI();
         if (hasLocationPermission()) {
-        	final Activity activity = requireActivity();
+			updateLocationUI();
+			final Activity activity = requireActivity();
 			mDefaultLocation = new LatLng(40.0, -83.0);
 			LocationRequest locationRequest = LocationRequest.create();
 			locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -177,7 +177,6 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
                 mLocationPermissionGranted = true;
             }
         }
-        updateLocationUI();
     }
 
     private void updateLocationUI() {
@@ -217,9 +216,9 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
     }
 
     private boolean hasLocationPermission() {
-        Activity activity = requireActivity();
+        final Activity activity = requireActivity();
         int result;
-		result = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+		result = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
 		return result == PackageManager.PERMISSION_GRANTED;
     }
 }
