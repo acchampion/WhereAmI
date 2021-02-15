@@ -41,25 +41,25 @@ import com.google.android.gms.tasks.Task;
  */
 
 public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback {
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private GoogleApiClient mApiClient;
-    private static final String[] LOCATION_PERMISSIONS = new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-    };
-    private Location mLocation;
-    private LatLng mDefaultLocation;
-    private static final int REQUEST_LOCATION_PERMISSIONS = 0;
-    private boolean mLocationPermissionGranted = false;
+	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+	private GoogleApiClient mApiClient;
+	private static final String[] LOCATION_PERMISSIONS = new String[]{
+			Manifest.permission.ACCESS_FINE_LOCATION,
+			Manifest.permission.ACCESS_COARSE_LOCATION
+	};
+	private Location mLocation;
+	private LatLng mDefaultLocation;
+	private static final int REQUEST_LOCATION_PERMISSIONS = 0;
+	private boolean mLocationPermissionGranted = false;
 
-    private final String TAG = getClass().getSimpleName();
+	private final String TAG = getClass().getSimpleName();
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 
-        Activity activity = requireActivity();
+		Activity activity = requireActivity();
 		mApiClient = new GoogleApiClient.Builder(activity)
 				.addApi(LocationServices.API)
 				.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -78,16 +78,16 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 		getMapAsync(this);
 	}
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        setUpEula();
-        findLocation();
-    }
+	@Override
+	public void onResume() {
+		super.onResume();
+		setUpEula();
+		findLocation();
+	}
 
-    @SuppressLint("MissingPermission")
-    private void findLocation() {
-        if (hasLocationPermission()) {
+	@SuppressLint("MissingPermission")
+	private void findLocation() {
+		if (hasLocationPermission()) {
 			updateLocationUI();
 			final Activity activity = requireActivity();
 			mDefaultLocation = new LatLng(40.0, -83.0);
@@ -118,26 +118,26 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 				}
 			});
 		} else {
-            requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
-        }
-    }
+			requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
+		}
+	}
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Activity activity = requireActivity();
+	@Override
+	public void onStart() {
+		super.onStart();
+		Activity activity = requireActivity();
 		activity.invalidateOptionsMenu();
 		mApiClient.connect();
-    }
+	}
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        mApiClient.disconnect();
-    }
+	@Override
+	public void onStop() {
+		super.onStop();
+		mApiClient.disconnect();
+	}
 
-    private void setUpEula() {
-        FragmentActivity activity = requireActivity();
+	private void setUpEula() {
+		FragmentActivity activity = requireActivity();
 
 		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
 		boolean isEulaAccepted = sharedPrefs.getBoolean(getString(R.string.eula_accepted_key), false);
@@ -147,78 +147,78 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 		}
 	}
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.maps_menu, menu);
-    }
+	@Override
+	public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.maps_menu, menu);
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_showcurrentlocation) {
-            Log.d(TAG, "Showing current location");
-            if (hasLocationPermission()) {
-                findLocation();
-            } else {
-                requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.menu_showcurrentlocation) {
+			Log.d(TAG, "Showing current location");
+			if (hasLocationPermission()) {
+				findLocation();
+			} else {
+				requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
+			}
+		}
+		return true;
+	}
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        mLocationPermissionGranted = false;
-        if (requestCode == REQUEST_LOCATION_PERMISSIONS) {// If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                mLocationPermissionGranted = true;
-            }
-        }
-    }
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   @NonNull String[] permissions,
+										   @NonNull int[] grantResults) {
+		mLocationPermissionGranted = false;
+		if (requestCode == REQUEST_LOCATION_PERMISSIONS) {// If request is cancelled, the result arrays are empty.
+			if (grantResults.length > 0
+					&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				mLocationPermissionGranted = true;
+			}
+		}
+	}
 
-    private void updateLocationUI() {
-        if (mMap == null) {
-            return;
-        }
-        try {
-            if (mLocationPermissionGranted) {
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            } else {
-                mMap.setMyLocationEnabled(false);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                mLocation = null;
-                requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
-            }
-        } catch (SecurityException e) {
-        	String msg = e.getMessage();
-        	if (msg != null) {
+	private void updateLocationUI() {
+		if (mMap == null) {
+			return;
+		}
+		try {
+			if (mLocationPermissionGranted) {
+				mMap.setMyLocationEnabled(true);
+				mMap.getUiSettings().setMyLocationButtonEnabled(true);
+			} else {
+				mMap.setMyLocationEnabled(false);
+				mMap.getUiSettings().setMyLocationButtonEnabled(false);
+				mLocation = null;
+				requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
+			}
+		} catch (SecurityException e) {
+			String msg = e.getMessage();
+			if (msg != null) {
 				Log.e("Exception: %s", msg);
 			}
-        }
-    }
+		}
+	}
 
-    @SuppressLint("MissingPermission")
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.addMarker(new MarkerOptions().position(new LatLng(40.0, -83.0))
-                .title("Ohio State University"));
-        if (hasLocationPermission()) {
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        }
-        mMap.setBuildingsEnabled(true);
-        mMap.setIndoorEnabled(true);
-    }
+	@SuppressLint("MissingPermission")
+	@Override
+	public void onMapReady(GoogleMap googleMap) {
+		mMap = googleMap;
+		mMap.addMarker(new MarkerOptions().position(new LatLng(40.0, -83.0))
+				.title("Ohio State University"));
+		if (hasLocationPermission()) {
+			mMap.setMyLocationEnabled(true);
+			mMap.getUiSettings().setMyLocationButtonEnabled(true);
+		}
+		mMap.setBuildingsEnabled(true);
+		mMap.setIndoorEnabled(true);
+	}
 
-    private boolean hasLocationPermission() {
-        final Activity activity = requireActivity();
-        int result;
+	private boolean hasLocationPermission() {
+		final Activity activity = requireActivity();
+		int result;
 		result = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
 		return result == PackageManager.PERMISSION_GRANTED;
-    }
+	}
 }
