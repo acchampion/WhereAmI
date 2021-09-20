@@ -1,27 +1,36 @@
-apply plugin: 'com.android.application'
-
-android {
-    compileSdkVersion 30
-    buildToolsVersion '29.0.3'
-
-    defaultConfig {
-        applicationId "edu.ohiostate.whereami"
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
-        vectorDrawables.useSupportLibrary = true
-    }
-    buildTypes {
-        release {
-        }
-    }
+plugins {
+	id 'com.android.application'
+	id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
+android {
+	compileSdkVersion 30
+	buildToolsVersion '30.0.3'
+
+	defaultConfig {
+		applicationId "edu.ohiostate.whereami"
+		minSdkVersion 23
+		targetSdkVersion 30
+		versionCode 1
+		versionName "1.0"
+		vectorDrawables.useSupportLibrary = true
+	}
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_11
+		targetCompatibility JavaVersion.VERSION_11
+	}
+	buildTypes {
+		release {
+		}
+	}
+}
+
+
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.android.gms:play-services-location:17.1.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-	implementation 'androidx.preference:preference:1.1.1'
+	implementation fileTree(include: ['*.jar'], dir: 'libs')
+	implementation "com.google.android.gms:play-services-location:$rootProject.playServicesVersion"
+	implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
+	implementation "androidx.appcompat:appcompat:$rootProject.appcompatVersion"
+	implementation "androidx.activity:activity:$rootProject.activityVersion"
+	implementation "androidx.preference:preference:$rootProject.preferenceVersion"
 }

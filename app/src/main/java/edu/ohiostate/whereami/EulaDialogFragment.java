@@ -3,7 +3,6 @@ package edu.ohiostate.whereami;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -30,20 +29,11 @@ public class EulaDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle(R.string.about_app)
                 .setMessage(Utils.fromHtml(getString(R.string.eula)))
-                .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        setEulaAccepted();
-                    }
-                })
-                .setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        Activity activity = requireActivity();
-						activity.finish();
-					}
-                });
+                .setPositiveButton(R.string.accept, (dialog, id) -> setEulaAccepted())
+                .setNegativeButton(R.string.decline, (dialog, which) -> {
+					dialog.cancel();
+					System.exit(1);
+				});
         return builder.create();
     }
 }
