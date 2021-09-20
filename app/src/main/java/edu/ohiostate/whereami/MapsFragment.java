@@ -6,14 +6,19 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
@@ -29,7 +34,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 /**
@@ -43,16 +47,28 @@ import com.google.android.gms.tasks.Task;
 public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback {
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private GoogleApiClient mApiClient;
-	private static final String[] LOCATION_PERMISSIONS = new String[]{
-			Manifest.permission.ACCESS_FINE_LOCATION,
-			Manifest.permission.ACCESS_COARSE_LOCATION
-	};
 	private Location mLocation;
 	private LatLng mDefaultLocation;
-	private static final int REQUEST_LOCATION_PERMISSIONS = 0;
-	private boolean mLocationPermissionGranted = false;
 
 	private final String TAG = getClass().getSimpleName();
+
+	private final ActivityResultLauncher<String> mActivityResult = registerForActivityResult(
+			new ActivityResultContracts.RequestPermission(), result -> {
+				if (result) {
+					// We have permission, so show the user's location.
+					findLocation();
+					updateLocationUI();
+				} else {
+					// The user denied location permission, so show them a message.
+					Log.e(TAG, "Error: location permission denied");
+
+					if (lacksLocationPermission()) {
+						Toast.makeText(requireActivity(), "Location permission denied", Toast.LENGTH_SHORT).show();
+					}
+
+				}
+			});
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -87,38 +103,34 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
 	@SuppressLint("MissingPermission")
 	private void findLocation() {
+		final Activity activity = requireActivity();
+		mDefaultLocation = new LatLng(40.0, -83.0);
+		LocationRequest locationRequest = LocationRequest.create();
+		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		locationRequest.setNumUpdates(1);
+		locationRequest.setInterval(0);
+		FusedLocationProviderClient locationProvider =
+				LocationServices.getFusedLocationProviderClient(activity);
+
 		if (hasLocationPermission()) {
 			updateLocationUI();
-			final Activity activity = requireActivity();
-			mDefaultLocation = new LatLng(40.0, -83.0);
-			LocationRequest locationRequest = LocationRequest.create();
-			locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-			locationRequest.setNumUpdates(1);
-			locationRequest.setInterval(0);
-			FusedLocationProviderClient locationProvider =
-					LocationServices.getFusedLocationProviderClient(activity);
 			Task<Location> locationResult = locationProvider.getLastLocation();
-			locationResult.addOnCompleteListener(activity, new OnCompleteListener<Location>() {
-				@Override
-				public void onComplete(@NonNull Task task) {
-					if (task.isSuccessful()) {
-						// Set the map's camera position to the current location of the device.
-						mLocation = (Location) task.getResult();
-						if (mLocation != null) {
-							mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-									new LatLng(mLocation.getLatitude(),
-											mLocation.getLongitude()), 16));
-						}
-					} else {
-						Log.d(TAG, "Current location is null. Using defaults.");
-						Log.e(TAG, "Exception: %s", task.getException());
-						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, 16));
-						mMap.getUiSettings().setMyLocationButtonEnabled(false);
+			locationResult.addOnCompleteListener(activity, task -> {
+				if (task.isSuccessful()) {
+					// Set the map's camera position to the current location of the device.
+					mLocation = (Location) task.getResult();
+					if (mLocation != null) {
+						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+								new LatLng(mLocation.getLatitude(),
+										mLocation.getLongitude()), 12));
 					}
+				} else {
+					Log.d(TAG, "Current location is null. Using defaults.");
+					Log.e(TAG, "Exception: %s", task.getException());
+					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, 16));
+					mMap.getUiSettings().setMyLocationButtonEnabled(false);
 				}
 			});
-		} else {
-			requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
 		}
 	}
 
@@ -157,48 +169,26 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menu_showcurrentlocation) {
 			Log.d(TAG, "Showing current location");
-			if (hasLocationPermission()) {
-				findLocation();
+			if (lacksLocationPermission()) {
+				mActivityResult.launch(Manifest.permission.ACCESS_FINE_LOCATION);
 			} else {
-				requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
+				findLocation();
 			}
 		}
 		return true;
 	}
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode,
-										   @NonNull String[] permissions,
-										   @NonNull int[] grantResults) {
-		mLocationPermissionGranted = false;
-		if (requestCode == REQUEST_LOCATION_PERMISSIONS) {// If request is cancelled, the result arrays are empty.
-			if (grantResults.length > 0
-					&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-				mLocationPermissionGranted = true;
-			}
-		}
-	}
 
+	@SuppressLint("MissingPermission")
+	@RequiresApi(api = Build.VERSION_CODES.M)
 	private void updateLocationUI() {
-		if (mMap == null) {
-			return;
-		}
-		try {
-			if (mLocationPermissionGranted) {
+		if (hasLocationPermission()) {
+			if (mMap != null) {
 				mMap.setMyLocationEnabled(true);
 				mMap.getUiSettings().setMyLocationButtonEnabled(true);
-			} else {
-				mMap.setMyLocationEnabled(false);
-				mMap.getUiSettings().setMyLocationButtonEnabled(false);
-				mLocation = null;
-				requestPermissions(LOCATION_PERMISSIONS, REQUEST_LOCATION_PERMISSIONS);
-			}
-		} catch (SecurityException e) {
-			String msg = e.getMessage();
-			if (msg != null) {
-				Log.e("Exception: %s", msg);
 			}
 		}
+
 	}
 
 	@SuppressLint("MissingPermission")
@@ -215,10 +205,15 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 		mMap.setIndoorEnabled(true);
 	}
 
-	private boolean hasLocationPermission() {
+	@RequiresApi(api = Build.VERSION_CODES.M)
+	private boolean lacksLocationPermission() {
 		final Activity activity = requireActivity();
-		int result;
-		result = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
-		return result == PackageManager.PERMISSION_GRANTED;
+		int result = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
+		return result != PackageManager.PERMISSION_GRANTED;
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.M)
+	private boolean hasLocationPermission() {
+		return !lacksLocationPermission();
 	}
 }
