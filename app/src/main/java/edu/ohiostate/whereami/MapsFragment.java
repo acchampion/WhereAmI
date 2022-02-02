@@ -3,6 +3,7 @@ package edu.ohiostate.whereami;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,19 +18,19 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -44,9 +45,10 @@ import com.google.android.gms.tasks.Task;
  * Created by adamcchampion on 2017/09/24.
  */
 
-public class MapsFragment extends SupportMapFragment implements OnMapReadyCallback {
+public class MapsFragment extends SupportMapFragment implements OnMyLocationButtonClickListener,
+		OnMyLocationClickListener,
+		OnMapReadyCallback {
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-	private GoogleApiClient mApiClient;
 	private Location mLocation;
 	private LatLng mDefaultLocation;
 
@@ -74,23 +76,6 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-
-		Activity activity = requireActivity();
-		mApiClient = new GoogleApiClient.Builder(activity)
-				.addApi(LocationServices.API)
-				.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-					@Override
-					public void onConnected(@Nullable Bundle bundle) {
-						Activity theActivity = requireActivity();
-						theActivity.invalidateOptionsMenu();
-					}
-
-					@Override
-					public void onConnectionSuspended(int i) {
-						Log.d(TAG, "GoogleAPIClient connection suspended");
-					}
-				})
-				.build();
 		getMapAsync(this);
 	}
 
@@ -118,7 +103,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 			locationResult.addOnCompleteListener(activity, task -> {
 				if (task.isSuccessful()) {
 					// Set the map's camera position to the current location of the device.
-					mLocation = (Location) task.getResult();
+					mLocation = task.getResult();
 					if (mLocation != null) {
 						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
 								new LatLng(mLocation.getLatitude(),
@@ -139,13 +124,11 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 		super.onStart();
 		Activity activity = requireActivity();
 		activity.invalidateOptionsMenu();
-		mApiClient.connect();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		mApiClient.disconnect();
 	}
 
 	private void setUpEula() {
@@ -193,7 +176,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 
 	@SuppressLint("MissingPermission")
 	@Override
-	public void onMapReady(GoogleMap googleMap) {
+	public void onMapReady(@NonNull GoogleMap googleMap) {
 		mMap = googleMap;
 		mMap.addMarker(new MarkerOptions().position(new LatLng(40.0, -83.0))
 				.title("Ohio State University"));
@@ -217,5 +200,23 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 	@RequiresApi(api = Build.VERSION_CODES.M)
 	private boolean hasLocationPermission() {
 		return !lacksLocationPermission();
+	}
+
+	@Override
+	public boolean onMyLocationButtonClick() {
+		Context context = requireContext();
+		Toast.makeText(context, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+		if (hasLocationPermission()) {
+			findLocation();
+		}
+		// Return false so that we don't consume the event and the default behavior still occurs
+		// (the camera animates to the user's current position).
+		return false;
+	}
+
+	@Override
+	public void onMyLocationClick(@NonNull Location location) {
+		Context context = requireContext();
+		Toast.makeText(context, "Current location:\n" + location, Toast.LENGTH_LONG).show();
 	}
 }
