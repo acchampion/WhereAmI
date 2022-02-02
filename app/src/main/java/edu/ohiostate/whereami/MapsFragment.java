@@ -122,7 +122,7 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 					if (mLocation != null) {
 						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
 								new LatLng(mLocation.getLatitude(),
-										mLocation.getLongitude()), 12));
+										mLocation.getLongitude()), 18));
 					}
 				} else {
 					Log.d(TAG, "Current location is null. Using defaults.");
@@ -197,6 +197,8 @@ public class MapsFragment extends SupportMapFragment implements OnMapReadyCallba
 		mMap = googleMap;
 		mMap.addMarker(new MarkerOptions().position(new LatLng(40.0, -83.0))
 				.title("Ohio State University"));
+		mMap.addMarker(new MarkerOptions().position(new LatLng(37.7749, -122.14494))
+				.title("San Francisco Bay Area, CA"));
 		if (hasLocationPermission()) {
 			mMap.setMyLocationEnabled(true);
 			mMap.getUiSettings().setMyLocationButtonEnabled(true);

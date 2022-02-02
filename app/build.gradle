@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-	compileSdkVersion 30
-	buildToolsVersion '30.0.3'
+	compileSdkVersion 32
+	buildToolsVersion '32.0.0'
 
 	defaultConfig {
 		applicationId "edu.ohiostate.whereami"
 		minSdkVersion 23
-		targetSdkVersion 30
+		targetSdkVersion 32
 		versionCode 1
 		versionName "1.0"
 		vectorDrawables.useSupportLibrary = true
@@ -28,8 +28,8 @@ android {
 
 dependencies {
 	implementation fileTree(include: ['*.jar'], dir: 'libs')
-	implementation "com.google.android.gms:play-services-location:$rootProject.playServicesVersion"
-	implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesVersion"
+	implementation "com.google.android.gms:play-services-location:$rootProject.playServicesLocationVersion"
+	implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesMapsVersion"
 	implementation "androidx.appcompat:appcompat:$rootProject.appcompatVersion"
 	implementation "androidx.activity:activity:$rootProject.activityVersion"
 	implementation "androidx.preference:preference:$rootProject.preferenceVersion"
