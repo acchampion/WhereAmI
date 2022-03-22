@@ -50,7 +50,7 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 		OnMapReadyCallback {
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private Location mLocation;
-	private LatLng mDefaultLocation;
+	private LatLng mDefaultLocation = new LatLng(40.0, -83.0);
 
 	private final String TAG = getClass().getSimpleName();
 
@@ -67,7 +67,6 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 					if (lacksLocationPermission()) {
 						Toast.makeText(requireActivity(), "Location permission denied", Toast.LENGTH_SHORT).show();
 					}
-
 				}
 			});
 
@@ -89,7 +88,6 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 	@SuppressLint("MissingPermission")
 	private void findLocation() {
 		final Activity activity = requireActivity();
-		mDefaultLocation = new LatLng(40.0, -83.0);
 		LocationRequest locationRequest = LocationRequest.create();
 		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		locationRequest.setNumUpdates(1);
@@ -105,9 +103,8 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 					// Set the map's camera position to the current location of the device.
 					mLocation = task.getResult();
 					if (mLocation != null) {
-						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-								new LatLng(mLocation.getLatitude(),
-										mLocation.getLongitude()), 18));
+						mDefaultLocation = new LatLng (mLocation.getLatitude(), mLocation.getLongitude());
+						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, 18));
 					}
 				} else {
 					Log.d(TAG, "Current location is null. Using defaults.");
