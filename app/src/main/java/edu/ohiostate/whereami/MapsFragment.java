@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,7 +17,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
@@ -160,7 +158,6 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 
 
 	@SuppressLint("MissingPermission")
-	@RequiresApi(api = Build.VERSION_CODES.M)
 	private void updateLocationUI() {
 		if (hasLocationPermission()) {
 			if (mMap != null) {
@@ -187,14 +184,12 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 		mMap.setIndoorEnabled(true);
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.M)
 	private boolean lacksLocationPermission() {
 		final Activity activity = requireActivity();
 		int result = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
 		return result != PackageManager.PERMISSION_GRANTED;
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.M)
 	private boolean hasLocationPermission() {
 		return !lacksLocationPermission();
 	}

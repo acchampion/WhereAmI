@@ -23,6 +23,7 @@ android {
 		release {
 		}
 	}
+	namespace 'edu.ohiostate.whereami'
 }
 
 
