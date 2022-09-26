@@ -25,6 +25,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
@@ -87,7 +88,7 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 	private void findLocation() {
 		final Activity activity = requireActivity();
 		LocationRequest locationRequest = LocationRequest.create();
-		locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
 		locationRequest.setNumUpdates(1);
 		locationRequest.setInterval(0);
 		FusedLocationProviderClient locationProvider =
