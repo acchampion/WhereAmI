@@ -6,9 +6,9 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:7.3.0'
         classpath 'com.google.gms:oss-licenses:0.9.2'
-		classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.0"
+		classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
 	}
 }
 
@@ -26,9 +26,9 @@ allprojects {
 }
 
 ext {
-	activityVersion = "1.4.0"
-	appcompatVersion = "1.4.1"
-	playServicesMapsVersion = "18.0.2"
-	playServicesLocationVersion = "19.0.1"
+	activityVersion = "1.6.0"
+	appcompatVersion = "1.5.1"
+	playServicesMapsVersion = "18.1.0"
+	playServicesLocationVersion = "20.0.0"
 	preferenceVersion = "1.2.0"
 }
