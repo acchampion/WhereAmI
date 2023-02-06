@@ -45,8 +45,7 @@ import com.google.android.gms.tasks.Task;
  */
 
 public class MapsFragment extends SupportMapFragment implements OnMyLocationButtonClickListener,
-		OnMyLocationClickListener,
-		OnMapReadyCallback {
+		OnMyLocationClickListener, OnMapReadyCallback {
 	private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 	private Location mLocation;
 	private LatLng mDefaultLocation = new LatLng(40.0, -83.0);

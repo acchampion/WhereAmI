@@ -32,6 +32,7 @@ public class EulaDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.accept, (dialog, id) -> setEulaAccepted())
                 .setNegativeButton(R.string.decline, (dialog, which) -> {
 					dialog.cancel();
+					requireActivity().finish();
 					System.exit(1);
 				});
         return builder.create();
