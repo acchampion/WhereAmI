@@ -1,34 +1,31 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.1'
-        classpath 'com.google.gms:oss-licenses:0.9.2'
-		classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
-	}
+plugins {
+	id 'com.android.application' version '8.1.0' apply false
+	id 'com.android.library' version '8.1.0' apply false
+	id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1' apply false
 }
 
 allprojects {
-    repositories {
-		mavenCentral()
-        google()
-    }
 	gradle.projectsEvaluated {
-		tasks.withType(JavaCompile) {
-			options.compilerArgs << "-Xlint:deprecation"
-			options.compilerArgs << "-Xlint:unchecked"
+		tasks.withType(JavaCompile).tap {
+			configureEach {
+				options.compilerArgs << "-Xlint:deprecation"
+				options.compilerArgs << "-Xlint:unchecked"
+			}
 		}
 	}
 }
 
+tasks.register('clean', Delete) {
+	delete(rootProject.buildDir)
+	delete(rootProject.getPath() + File.separator + "build-cache")
+}
+
 ext {
-	activityVersion = "1.6.1"
-	appcompatVersion = "1.6.0"
+	activityVersion = "1.7.2"
+	appcompatVersion = "1.6.1"
 	playServicesMapsVersion = "18.1.0"
 	playServicesLocationVersion = "21.0.1"
-	preferenceVersion = "1.2.0"
+	preferenceVersion = "1.2.1"
 }

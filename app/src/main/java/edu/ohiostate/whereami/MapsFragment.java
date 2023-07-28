@@ -39,7 +39,7 @@ import com.google.android.gms.tasks.Task;
 /**
  * Class for Maps Fragment. Sources:
  * - Big Nerd Ranch Guide to Android Programming, Chap. 34
- * - Google: https://developers.google.com/maps/documentation/android-api/current-place-tutorial
+ * - Google: <a href="https://developers.google.com/maps/documentation/android-api/current-place-tutorial">...</a>
  * <p>
  * Created by adamcchampion on 2017/09/24.
  */
@@ -86,10 +86,8 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 	@SuppressLint("MissingPermission")
 	private void findLocation() {
 		final Activity activity = requireActivity();
-		LocationRequest locationRequest = LocationRequest.create();
-		locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
-		locationRequest.setNumUpdates(1);
-		locationRequest.setInterval(0);
+		LocationRequest.Builder builder = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5_000L);
+		LocationRequest request = builder.build();
 		FusedLocationProviderClient locationProvider =
 				LocationServices.getFusedLocationProviderClient(activity);
 
@@ -101,7 +99,7 @@ public class MapsFragment extends SupportMapFragment implements OnMyLocationButt
 					// Set the map's camera position to the current location of the device.
 					mLocation = task.getResult();
 					if (mLocation != null) {
-						mDefaultLocation = new LatLng (mLocation.getLatitude(), mLocation.getLongitude());
+						mDefaultLocation = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
 						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, 18));
 					}
 				} else {

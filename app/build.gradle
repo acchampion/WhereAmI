@@ -4,34 +4,38 @@ plugins {
 }
 
 android {
-	compileSdkVersion 33
-	buildToolsVersion '33.0.0'
-
 	defaultConfig {
-		applicationId "edu.ohiostate.whereami"
-		minSdkVersion 24
-		targetSdkVersion 33
-		versionCode 1
-		versionName "1.0"
+		compileSdk = 33
+		buildToolsVersion = "34.0.0"
+		applicationId("edu.ohiostate.whereami")
+		minSdkVersion(24)
+		targetSdkVersion(33)
+		versionCode = 1
+		versionName = "1.0"
 		vectorDrawables.useSupportLibrary = true
 	}
 	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_11
-		targetCompatibility JavaVersion.VERSION_11
+		sourceCompatibility JavaVersion.VERSION_17
+		targetCompatibility JavaVersion.VERSION_17
 	}
-	buildTypes {
-		release {
-		}
-	}
-	namespace 'edu.ohiostate.whereami'
+	namespace('edu.ohiostate.whereami')
 }
 
 
 dependencies {
-	implementation fileTree(include: ['*.jar'], dir: 'libs')
-	implementation "com.google.android.gms:play-services-location:$rootProject.playServicesLocationVersion"
-	implementation "com.google.android.gms:play-services-maps:$rootProject.playServicesMapsVersion"
-	implementation "androidx.appcompat:appcompat:$rootProject.appcompatVersion"
-	implementation "androidx.activity:activity:$rootProject.activityVersion"
-	implementation "androidx.preference:preference:$rootProject.preferenceVersion"
+	implementation(fileTree(include: ['*.jar'], dir: 'libs'))
+
+	constraints {
+		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+			because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+		}
+		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+			because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+		}
+	}
+	implementation("com.google.android.gms:play-services-location:$rootProject.playServicesLocationVersion")
+	implementation("com.google.android.gms:play-services-maps:$rootProject.playServicesMapsVersion")
+	implementation("androidx.appcompat:appcompat:$rootProject.appcompatVersion")
+	implementation("androidx.activity:activity:$rootProject.activityVersion")
+	implementation("androidx.preference:preference:$rootProject.preferenceVersion")
 }
