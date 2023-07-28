@@ -23,12 +23,8 @@ public class MapsApplication extends Application implements OnMapsSdkInitialized
 	@Override
 	public void onMapsSdkInitialized(@NonNull Renderer renderer) {
 		switch (renderer) {
-			case LATEST:
-				Log.d(TAG, "The latest version of the renderer is used.");
-				break;
-			case LEGACY:
-				Log.d(TAG, "The legacy version of the renderer is used.");
-				break;
+			case LATEST -> Log.d(TAG, "The latest version of the renderer is used.");
+			case LEGACY -> Log.d(TAG, "The legacy version of the renderer is used.");
 		}
 	}
 }
