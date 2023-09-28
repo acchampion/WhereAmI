@@ -38,4 +38,7 @@ dependencies {
 	implementation("androidx.appcompat:appcompat:$rootProject.appcompatVersion")
 	implementation("androidx.activity:activity:$rootProject.activityVersion")
 	implementation("androidx.preference:preference:$rootProject.preferenceVersion")
+	testImplementation("junit:junit:$rootProject.junitLibVersion")
+	androidTestImplementation("androidx.test.ext:junit:$rootProject.junitVersion")
+	androidTestImplementation("androidx.test.espresso:espresso-core:$rootProject.espressoVersion")
 }

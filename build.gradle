@@ -28,4 +28,7 @@ ext {
 	playServicesMapsVersion = "18.1.0"
 	playServicesLocationVersion = "21.0.1"
 	preferenceVersion = "1.2.1"
+	junitLibVersion = "4.13.2"
+	junitVersion = "1.1.5"
+	espressoVersion = "3.5.1"
 }
